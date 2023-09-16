@@ -1,7 +1,7 @@
 <form action="action_page.php">
   <div class="container">
     <h1>New user Registration Form for DevOps Learning at Naren Quick Devops Youtube Channel</h1>
-    <p>Please fill in this form to create an account.</p>
+    <p>Please fillup this form to create an account.</p>
     <hr>
      
     <label for="Name"><b>Enter Name</b></label>
