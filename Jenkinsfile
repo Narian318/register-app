@@ -63,7 +63,7 @@ pipeline {
                 script{
                     withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker') {
                         sh "docker build -t register-app-pipeline ."
-                        sh "docker tag petshop narian318/register-app-pipeline:latest"
+                        sh "docker tag register-app-pipeline narian318/register-app-pipeline:latest"
                         sh "docker push narian318/register-app-pipeline:latest"
                    }
                 }
