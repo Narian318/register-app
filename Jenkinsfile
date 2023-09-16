@@ -4,15 +4,15 @@ pipeline {
         jdk 'jdk17'
         maven 'Maven3'
     }
-    environment {
-	    APP_NAME = "register-app-pipeline"
-            RELEASE = "1.0.0"
-            DOCKER_USER = "narian318"
-            DOCKER_PASS = 'dockerhub'
-            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-            IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    // environment {
+	   //  APP_NAME = "register-app-pipeline"
+    //         RELEASE = "1.0.0"
+    //         DOCKER_USER = "narian318"
+    //         DOCKER_PASS = 'dockerhub'
+    //         IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+    //         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 	    
-    }
+    // }
     stages{
         stage("Cleanup Workspace"){
                 steps {
@@ -58,21 +58,17 @@ pipeline {
 
         }
 
-        stage("Build & Push Docker Image") {
-            steps {
-                script {
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
-
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
-                    }
+       stage ('Build and push to docker hub'){
+            steps{
+                script{
+                    withDockerRegistry(credentialsId: 'dockerhub', toolName: 'docker') {
+                        sh "docker build -t register-app-pipeline ."
+                        sh "docker tag petshop narian318/register-app-pipeline:latest"
+                        sh "docker push narian318/register-app-pipeline:latest"
+                   }
                 }
             }
-
-       }
+        }
 
        stage("Trivy Scan") {
            steps {
@@ -85,8 +81,7 @@ pipeline {
        stage ('Cleanup Artifacts') {
            steps {
                script {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker rmi ${IMAGE_NAME}:latest"
+                    sh "docker rmi register-app-pipeline:latest"
                }
           }
        }
